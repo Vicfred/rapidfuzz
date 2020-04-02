@@ -1,6 +1,7 @@
 #define PY_SSIZE_T_CLEAN  /* Make "s#" use Py_ssize_t rather than int. */
 #include <Python.h>
 #include <string>
+#include <boost/utility/string_view.hpp>
 #include "levenshtein.hpp"
 
 
@@ -26,8 +27,8 @@ PyObject* distance(PyObject *self, PyObject *args, PyObject *keywds) {
         return NULL;
 
     std::size_t result = levenshtein::distance(
-        std::wstring_view(s1, wcslen(s1)),
-        std::wstring_view(s2, wcslen(s2)));
+        boost::wstring_view(s1, wcslen(s1)),
+        boost::wstring_view(s2, wcslen(s2)));
     return PyLong_FromSize_t(result);
 }
 
@@ -56,8 +57,8 @@ PyObject* normalized_distance(PyObject *self, PyObject *args, PyObject *keywds) 
         return NULL;
 
     double result = levenshtein::normalized_distance(
-        std::wstring_view(s1, wcslen(s1)),
-        std::wstring_view(s2, wcslen(s2)),
+        boost::wstring_view(s1, wcslen(s1)),
+        boost::wstring_view(s2, wcslen(s2)),
         score_cutoff/100);
     return PyFloat_FromDouble(result*100);
 }
@@ -95,19 +96,19 @@ PyObject* weighted_distance(PyObject *self, PyObject *args, PyObject *keywds) {
     if (insert_cost == 1 && delete_cost == 1) {
         if (replace_cost == 1) {
             std::size_t result = levenshtein::distance(
-                std::wstring_view(s1, wcslen(s1)),
-                std::wstring_view(s2, wcslen(s2)));
+                boost::wstring_view(s1, wcslen(s1)),
+                boost::wstring_view(s2, wcslen(s2)));
             return PyLong_FromSize_t(result);
         } else if (replace_cost == 2) {
             std::size_t result = levenshtein::weighted_distance(
-                std::wstring_view(s1, wcslen(s1)),
-                std::wstring_view(s2, wcslen(s2)));
+                boost::wstring_view(s1, wcslen(s1)),
+                boost::wstring_view(s2, wcslen(s2)));
             return PyLong_FromSize_t(result);
         }
     }
     std::size_t result = levenshtein::generic_distance(
-        std::wstring_view(s1, wcslen(s1)),
-        std::wstring_view(s2, wcslen(s2)),
+        boost::wstring_view(s1, wcslen(s1)),
+        boost::wstring_view(s2, wcslen(s2)),
         {insert_cost, delete_cost, replace_cost});
     return PyLong_FromSize_t(result);
 }
@@ -144,8 +145,8 @@ PyObject* normalized_weighted_distance(PyObject *self, PyObject *args, PyObject 
         return NULL;
 
     double result = levenshtein::normalized_weighted_distance(
-        std::wstring_view(s1, wcslen(s1)),
-        std::wstring_view(s2, wcslen(s2)),
+        boost::wstring_view(s1, wcslen(s1)),
+        boost::wstring_view(s2, wcslen(s2)),
         score_cutoff/100);
     return PyFloat_FromDouble(result*100);
 }

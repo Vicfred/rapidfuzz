@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-levenshtein::Matrix levenshtein::matrix(std::wstring_view sentence1, std::wstring_view sentence2)
+levenshtein::Matrix levenshtein::matrix(boost::wstring_view sentence1, boost::wstring_view sentence2)
 {
     Affix affix = utils::remove_common_affix(sentence1, sentence2);
 
@@ -42,7 +42,7 @@ levenshtein::Matrix levenshtein::matrix(std::wstring_view sentence1, std::wstrin
     };
 }
 
-std::vector<levenshtein::EditOp> levenshtein::editops(std::wstring_view sentence1, std::wstring_view sentence2)
+std::vector<levenshtein::EditOp> levenshtein::editops(boost::wstring_view sentence1, boost::wstring_view sentence2)
 {
     auto m = matrix(sentence1, sentence2);
     std::size_t matrix_columns = m.matrix_columns;
@@ -103,7 +103,7 @@ std::vector<levenshtein::EditOp> levenshtein::editops(std::wstring_view sentence
     return ops;
 }
 
-std::vector<levenshtein::MatchingBlock> levenshtein::matching_blocks(std::wstring_view sentence1, std::wstring_view sentence2)
+std::vector<levenshtein::MatchingBlock> levenshtein::matching_blocks(boost::wstring_view sentence1, boost::wstring_view sentence2)
 {
     auto edit_ops = editops(sentence1, sentence2);
     std::size_t first_start = 0;
@@ -141,7 +141,7 @@ std::vector<levenshtein::MatchingBlock> levenshtein::matching_blocks(std::wstrin
     return mblocks;
 }
 
-double levenshtein::normalized_distance(std::wstring_view sentence1, std::wstring_view sentence2, double min_ratio)
+double levenshtein::normalized_distance(boost::wstring_view sentence1, boost::wstring_view sentence2, double min_ratio)
 {
     if (sentence1.empty() || sentence2.empty()) {
         return sentence1.empty() && sentence2.empty();
@@ -153,11 +153,10 @@ double levenshtein::normalized_distance(std::wstring_view sentence1, std::wstrin
 
     // constant time calculation to find a string ratio based on the string length
     // so it can exit early without running any levenshtein calculations
-    std::size_t min_distance = (sentence1_len > sentence2_len)
-        ? sentence1_len - sentence2_len
-        : sentence2_len - sentence1_len;
+    double len_ratio = (sentence1_len > sentence2_len)
+        ? sentence2_len / sentence1_len
+        : sentence1_len / sentence2_len;
 
-    double len_ratio = 1.0 - static_cast<double>(min_distance) / max_len;
     if (len_ratio < min_ratio) {
         return 0.0;
     }
@@ -168,7 +167,7 @@ double levenshtein::normalized_distance(std::wstring_view sentence1, std::wstrin
     return (ratio >= min_ratio) ? ratio : 0.0;
 }
 
-std::size_t levenshtein::distance(std::wstring_view sentence1, std::wstring_view sentence2)
+std::size_t levenshtein::distance(boost::wstring_view sentence1, boost::wstring_view sentence2)
 {
 
     utils::remove_common_affix(sentence1, sentence2);
@@ -202,7 +201,7 @@ std::size_t levenshtein::distance(std::wstring_view sentence1, std::wstring_view
     return cache.back();
 }
 
-std::size_t levenshtein::generic_distance(std::wstring_view sentence1, std::wstring_view sentence2, WeightTable weights)
+std::size_t levenshtein::generic_distance(boost::wstring_view sentence1, boost::wstring_view sentence2, WeightTable weights)
 {
     utils::remove_common_affix(sentence1, sentence2);
     if (sentence1.size() > sentence2.size()) {

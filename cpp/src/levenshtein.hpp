@@ -4,6 +4,7 @@
 #include <cmath>
 #include <optional>
 #include <numeric>
+#include <boost/utility/string_view.hpp>
 #include "utils.hpp"
 
 namespace levenshtein {
@@ -38,9 +39,9 @@ struct Matrix {
     std::size_t matrix_rows;
 };
 
-Matrix matrix(std::wstring_view sentence1, std::wstring_view sentence2);
+Matrix matrix(boost::wstring_view sentence1, boost::wstring_view sentence2);
 
-std::vector<EditOp> editops(std::wstring_view sentence1, std::wstring_view sentence2);
+std::vector<EditOp> editops(boost::wstring_view sentence1, boost::wstring_view sentence2);
 
 struct MatchingBlock {
     std::size_t first_start;
@@ -53,14 +54,14 @@ struct MatchingBlock {
     {}
 };
 
-std::vector<MatchingBlock> matching_blocks(std::wstring_view sentence1, std::wstring_view sentence2);
+std::vector<MatchingBlock> matching_blocks(boost::wstring_view sentence1, boost::wstring_view sentence2);
 
-double normalized_distance(std::wstring_view sentence1, std::wstring_view sentence2, double min_ratio = 0.0);
+double normalized_distance(boost::wstring_view sentence1, boost::wstring_view sentence2, double min_ratio = 0.0);
 
-std::size_t distance(std::wstring_view sentence1, std::wstring_view sentence2);
+std::size_t distance(boost::wstring_view sentence1, boost::wstring_view sentence2);
 
 template <typename MaxDistanceCalc = std::false_type>
-auto levenshtein_word_cmp(const wchar_t& letter_cmp, const std::vector<std::wstring_view>& words,
+auto levenshtein_word_cmp(const wchar_t& letter_cmp, const std::vector<boost::wstring_view>& words,
     std::vector<std::size_t>& cache, std::size_t current_cache);
 
 /**
@@ -82,12 +83,12 @@ auto levenshtein_word_cmp(const wchar_t& letter_cmp, const std::vector<std::wstr
  * @return weighted levenshtein distance
  */
 template <typename MaxDistance = std::nullopt_t>
-std::size_t weighted_distance(std::wstring_view sentence1, std::wstring_view sentence2, MaxDistance max_distance = std::nullopt);
+std::size_t weighted_distance(boost::wstring_view sentence1, boost::wstring_view sentence2, MaxDistance max_distance = std::nullopt);
 
 template <typename MaxDistance = std::nullopt_t>
-std::size_t weighted_distance(std::vector<std::wstring_view> sentence1, std::vector<std::wstring_view> sentence2, MaxDistance max_distance = std::nullopt);
+std::size_t weighted_distance(std::vector<boost::wstring_view> sentence1, std::vector<boost::wstring_view> sentence2, MaxDistance max_distance = std::nullopt);
 
-std::size_t generic_distance(std::wstring_view source, std::wstring_view target, WeightTable weights = { 1, 1, 1 });
+std::size_t generic_distance(boost::wstring_view source, boost::wstring_view target, WeightTable weights = { 1, 1, 1 });
 
 /**
     * Calculates a normalized score of the weighted Levenshtein algorithm between 0.0 and
@@ -98,7 +99,7 @@ double normalized_weighted_distance(const Sentence1& sentence1, const Sentence2&
 }
 
 template <typename MaxDistanceCalc>
-inline auto levenshtein::levenshtein_word_cmp(const wchar_t& letter_cmp, const std::vector<std::wstring_view>& words,
+inline auto levenshtein::levenshtein_word_cmp(const wchar_t& letter_cmp, const std::vector<boost::wstring_view>& words,
     std::vector<std::size_t>& cache, std::size_t current_cache)
 {
     std::size_t result = current_cache + 1;
@@ -150,7 +151,7 @@ inline auto levenshtein::levenshtein_word_cmp(const wchar_t& letter_cmp, const s
 }
 
 template <typename MaxDistance>
-inline std::size_t levenshtein::weighted_distance(std::vector<std::wstring_view> sentence1, std::vector<std::wstring_view> sentence2, MaxDistance max_distance)
+inline std::size_t levenshtein::weighted_distance(std::vector<boost::wstring_view> sentence1, std::vector<boost::wstring_view> sentence2, MaxDistance max_distance)
 {
     utils::remove_common_affix(sentence1, sentence2);
     std::size_t sentence1_len = utils::joined_size(sentence1);
@@ -217,7 +218,7 @@ inline std::size_t levenshtein::weighted_distance(std::vector<std::wstring_view>
 }
 
 template <typename MaxDistance>
-inline std::size_t levenshtein::weighted_distance(std::wstring_view sentence1, std::wstring_view sentence2, MaxDistance max_distance)
+inline std::size_t levenshtein::weighted_distance(boost::wstring_view sentence1, boost::wstring_view sentence2, MaxDistance max_distance)
 {
     utils::remove_common_affix(sentence1, sentence2);
 
@@ -270,6 +271,7 @@ inline std::size_t levenshtein::weighted_distance(std::wstring_view sentence1, s
     return cache.back();
 }
 
+
 template <typename Sentence1, typename Sentence2>
 inline double levenshtein::normalized_weighted_distance(const Sentence1& sentence1, const Sentence2& sentence2, double min_ratio)
 {
@@ -283,18 +285,14 @@ inline double levenshtein::normalized_weighted_distance(const Sentence1& sentenc
 
     // constant time calculation to find a string ratio based on the string length
     // so it can exit early without running any levenshtein calculations
-    std::size_t min_distance = (sentence1_len > sentence2_len)
-        ? sentence1_len - sentence2_len
-        : sentence2_len - sentence1_len;
-
-    double len_ratio = 1.0 - static_cast<double>(min_distance) / lensum;
+    double len_ratio = 2.0 * std::min(sentence1_len, sentence2_len) / lensum;
     if (len_ratio < min_ratio) {
         return 0.0;
     }
 
     // TODO: this needs more thoughts when to start using score cutoff, since it performs slower when it can not exit early
     // -> just because it has a smaller ratio does not mean levenshtein can always exit early
-    // has to be tested with some more real examplesstatic_cast<double>(
+    // has to be tested with some more real examples
     std::size_t dist = (min_ratio > 0.7)
         ? weighted_distance(sentence1, sentence2, std::ceil(static_cast<double>(lensum) - min_ratio * lensum))
         : weighted_distance(sentence1, sentence2);

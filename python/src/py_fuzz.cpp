@@ -1,6 +1,7 @@
 #define PY_SSIZE_T_CLEAN  /* Make "s#" use Py_ssize_t rather than int. */
 #include <Python.h>
 #include <string>
+#include <boost/utility/string_view.hpp>
 #include "fuzz.hpp"
 #include "utils.hpp"
 
@@ -43,8 +44,8 @@ static PyObject* ratio(PyObject *self, PyObject *args, PyObject *keywds) {
             score_cutoff);
     } else {
         result = fuzz::ratio(
-            std::wstring_view(s1, wcslen(s1)),
-            std::wstring_view(s2, wcslen(s2)),
+            boost::wstring_view(s1, wcslen(s1)),
+            boost::wstring_view(s2, wcslen(s2)),
             score_cutoff);
     }
 
@@ -90,8 +91,8 @@ static PyObject* partial_ratio(PyObject *self, PyObject *args, PyObject *keywds)
             score_cutoff);
     } else {
         result = fuzz::partial_ratio(
-            std::wstring_view(s1, wcslen(s1)),
-            std::wstring_view(s2, wcslen(s2)),
+            boost::wstring_view(s1, wcslen(s1)),
+            boost::wstring_view(s2, wcslen(s2)),
             score_cutoff);
     }
 
@@ -137,8 +138,8 @@ static PyObject* token_sort_ratio(PyObject *self, PyObject *args, PyObject *keyw
             score_cutoff);
     } else {
         result = fuzz::token_sort_ratio(
-            std::wstring_view(s1, wcslen(s1)),
-            std::wstring_view(s2, wcslen(s2)),
+            boost::wstring_view(s1, wcslen(s1)),
+            boost::wstring_view(s2, wcslen(s2)),
             score_cutoff);
     }
 
@@ -180,8 +181,8 @@ static PyObject* partial_token_sort_ratio(PyObject *self, PyObject *args, PyObje
             score_cutoff);
     } else {
         result = fuzz::partial_token_sort_ratio(
-            std::wstring_view(s1, wcslen(s1)),
-            std::wstring_view(s2, wcslen(s2)),
+            boost::wstring_view(s1, wcslen(s1)),
+            boost::wstring_view(s2, wcslen(s2)),
             score_cutoff);
     }
 
@@ -229,8 +230,8 @@ static PyObject* token_set_ratio(PyObject *self, PyObject *args, PyObject *keywd
             score_cutoff);
     } else {
         result = fuzz::token_set_ratio(
-            std::wstring_view(s1, wcslen(s1)),
-            std::wstring_view(s2, wcslen(s2)),
+            boost::wstring_view(s1, wcslen(s1)),
+            boost::wstring_view(s2, wcslen(s2)),
             score_cutoff);
     }
 
@@ -272,8 +273,8 @@ static PyObject* partial_token_set_ratio(PyObject *self, PyObject *args, PyObjec
             score_cutoff);
     } else {
         result = fuzz::partial_token_set_ratio(
-            std::wstring_view(s1, wcslen(s1)),
-            std::wstring_view(s2, wcslen(s2)),
+            boost::wstring_view(s1, wcslen(s1)),
+            boost::wstring_view(s2, wcslen(s2)),
             score_cutoff);
     }
 
@@ -316,8 +317,8 @@ static PyObject* token_ratio(PyObject *self, PyObject *args, PyObject *keywds) {
             score_cutoff);
     } else {
         result = fuzz::token_ratio(
-            std::wstring_view(s1, wcslen(s1)),
-            std::wstring_view(s2, wcslen(s2)),
+            boost::wstring_view(s1, wcslen(s1)),
+            boost::wstring_view(s2, wcslen(s2)),
             score_cutoff);
     }
 
@@ -360,8 +361,8 @@ static PyObject* partial_token_ratio(PyObject *self, PyObject *args, PyObject *k
             score_cutoff);
     } else {
         result = fuzz::partial_token_ratio(
-            std::wstring_view(s1, wcslen(s1)),
-            std::wstring_view(s2, wcslen(s2)),
+            boost::wstring_view(s1, wcslen(s1)),
+            boost::wstring_view(s2, wcslen(s2)),
             score_cutoff);
     }
 
@@ -427,8 +428,8 @@ static PyObject* WRatio(PyObject *self, PyObject *args, PyObject *keywds) {
             score_cutoff);
     } else {
         result = fuzz::WRatio(
-            std::wstring_view(s1, wcslen(s1)),
-            std::wstring_view(s2, wcslen(s2)),
+            boost::wstring_view(s1, wcslen(s1)),
+            boost::wstring_view(s2, wcslen(s2)),
             score_cutoff);
     }
 

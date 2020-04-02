@@ -1,6 +1,7 @@
 #define PY_SSIZE_T_CLEAN  /* Make "s#" use Py_ssize_t rather than int. */
 #include <Python.h>
 #include <string>
+#include <boost/utility/string_view.hpp>
 #include <algorithm>
 #include "process.hpp"
 #include "utils.hpp"
@@ -64,7 +65,7 @@ PyObject* extract(PyObject *self, PyObject *args, PyObject *keywds) {
         } else {
             score = fuzz::WRatio(
                 cleaned_query,
-                std::wstring_view(choice, wcslen(choice)),
+                boost::wstring_view(choice, wcslen(choice)),
                 score_cutoff);
         }
 
@@ -151,7 +152,7 @@ PyObject* extractOne(PyObject *self, PyObject *args, PyObject *keywds) {
         } else {
             score = fuzz::WRatio(
                 cleaned_query,
-                std::wstring_view(choice, wcslen(choice)),
+                boost::wstring_view(choice, wcslen(choice)),
                 score_cutoff);
         }
 

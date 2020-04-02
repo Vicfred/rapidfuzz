@@ -53,19 +53,19 @@ setup(
 		Extension(
 			'rapidfuzz.levenshtein',
 			['python/src/py_levenshtein.cpp', 'cpp/src/levenshtein.cpp', 'cpp/src/utils.cpp'],
-        	include_dirs=["cpp/src"],
+        	include_dirs=["cpp/src", "cpp/extern"],
         	language='c++',
 		),
 		Extension(
 			'rapidfuzz.fuzz',
 			['python/src/py_fuzz.cpp', 'cpp/src/fuzz.cpp', 'cpp/src/levenshtein.cpp', 'cpp/src/utils.cpp'],
-        	include_dirs=["cpp/src"],
+        	include_dirs=["cpp/src", "cpp/extern"],
         	language='c++',
 		),
 		Extension(
 			'rapidfuzz._process',
 			['python/src/py_process.cpp', 'cpp/src/process.cpp', 'cpp/src/fuzz.cpp', 'cpp/src/levenshtein.cpp', 'cpp/src/utils.cpp'],
-        	include_dirs=["cpp/src"],
+        	include_dirs=["cpp/src", "cpp/extern"],
         	language='c++',
 		),
 	],
